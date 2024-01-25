@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fillViewport="true"
+  android:scrollbars="none">
+
+  <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="20dp"
+    tools:context=".TutorialFragment">
+
+    <TextView
+      android:id="@+id/errorMessage"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="10dp"
+      android:layout_marginBottom="15dp"
+      android:layout_marginTop="4dp"
+      android:textColor="@android:color/holo_red_light"
+      android:textSize="15sp"
+      android:visibility="gone"
+      tools:text="Image failed loading" />
+
+    <Button
+      android:id="@+id/reload"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/reload"
+      android:visibility="gone" />
+
+    <TextView
+      android:id="@+id/tutorialName"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="12dp"
+      android:textSize="18sp"
+      android:textStyle="bold"
+      tools:text="RxKotlin" />
+
+    <TextView
+      android:id="@+id/tutorialDesc"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="10dp"
+      android:layout_marginBottom="15dp"
+      android:layout_marginTop="4dp"
+      android:textSize="15sp"
+      tools:text="RxKotlin is a reactive extensions." />
+
+    <ImageView
+      android:id="@+id/snowFilterImage"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:importantForAccessibility="no"
+      android:src="@mipmap/ic_launcher" />
+
+    <ImageView
+      android:id="@+id/snowFilterSecondImage"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:importantForAccessibility="no"
+      tools:src="@mipmap/ic_launcher" />
+
+    <ProgressBar
+      android:id="@+id/progressBar"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:visibility="gone" />
+  </LinearLayout>
+</ScrollView>

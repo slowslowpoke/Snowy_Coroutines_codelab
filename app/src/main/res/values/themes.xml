@@ -1,0 +1,18 @@
+<resources>
+
+  <!-- Base application theme. -->
+  <style name="AppTheme" parent="Theme.Material3.DayNight">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">@color/green</item>
+    <item name="colorPrimaryDark">@color/dark_green</item>
+    <item name="colorAccent">@color/orange</item>
+    <item name="colorOnPrimary">@color/white</item>
+  </style>
+
+  <!-- Splash Screen Theme-->
+  <style name="SplashTheme" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/white</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/app_icon_orange</item>
+    <item name="postSplashScreenTheme">@style/AppTheme</item>
+  </style>
+</resources>
