@@ -44,102 +44,121 @@ import kotlinx.coroutines.*
 import java.net.URL
 
 class TutorialFragment : Fragment(R.layout.fragment_tutorial) {
-  private var binding: FragmentTutorialBinding? = null
+    private var binding: FragmentTutorialBinding? = null
 
-  // TODO: Insert coroutineExceptionHandler
+    // TODO: Insert coroutineExceptionHandler
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    binding = FragmentTutorialBinding.bind(view)
-    val tutorial = arguments?.getParcelable<Tutorial>(TUTORIAL_KEY) as Tutorial
-    binding?.let {
-      with(it) {
-        tutorialName.text = tutorial.name
-        tutorialDesc.text = tutorial.description
-        reload.setOnClickListener { downloadTutorialImages(tutorial) }
-      }
-    }
-    downloadTutorialImages(tutorial)
-  }
-
-  private fun downloadTutorialImages(tutorial: Tutorial) {
-    if (tutorial.imageTwoUrl.isBlank()) {
-      downloadSingleImage(tutorial)
-    } else {
-      downloadTwoImages(tutorial)
-    }
-  }
-
-  private fun downloadSingleImage(tutorial: Tutorial) {
-    // TODO: Not implemented
-  }
-
-  private fun downloadTwoImages(tutorial: Tutorial) {
-    // TODO: Not implemented
-  }
-
-  //1
-  private suspend fun getOriginalBitmap(tutorial: Tutorial): Bitmap =
-    //2
-    withContext(Dispatchers.IO) {
-      //3
-      URL(tutorial.imageUrl).openStream().use {
-        return@withContext BitmapFactory.decodeStream(it)
-      }
-    }
-
-  private fun loadSnowFilter(originalBitmap: Bitmap): Bitmap {
-    return SnowFilter.applySnowEffect(originalBitmap)
-  }
-
-  private fun loadImage(snowFilterBitmap: Bitmap) {
-    binding?.let {
-      with(it) {
-        progressBar.visibility = View.GONE
-        reload.isVisible = false
-        errorMessage.isVisible = false
-        snowFilterImage.setImageBitmap(snowFilterBitmap)
-      }
-    }
-  }
-
-  private fun loadTwoImages(imageOne: Bitmap, imageTwo: Bitmap) {
-    binding?.let {
-      with(it) {
-        progressBar.visibility = View.GONE
-        reload.isVisible = false
-        errorMessage.isVisible = false
-        snowFilterImage.setImageBitmap(imageOne)
-        snowFilterSecondImage.setImageBitmap(imageTwo)
-      }
-    }
-  }
-
-  private fun showError(message: String) {
-    binding?.let {
-      with(it) {
-        errorMessage.isVisible = true
-        reload.isVisible = true
-        errorMessage.text = message
-        progressBar.isVisible = false
-      }
-    }
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    binding = null
-  }
-
-  companion object {
-    const val TUTORIAL_KEY = "TUTORIAL"
-
-    fun newInstance(tutorial: Tutorial): TutorialFragment {
-      return TutorialFragment().apply {
-        arguments = Bundle().apply {
-          putParcelable(TUTORIAL_KEY, tutorial)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentTutorialBinding.bind(view)
+        val tutorial = arguments?.getParcelable<Tutorial>(TUTORIAL_KEY) as Tutorial
+        binding?.let {
+            with(it) {
+                tutorialName.text = tutorial.name
+                tutorialDesc.text = tutorial.description
+                reload.setOnClickListener { downloadTutorialImages(tutorial) }
+            }
         }
-      }
+        downloadTutorialImages(tutorial)
     }
-  }
+
+    private fun downloadTutorialImages(tutorial: Tutorial) {
+        if (tutorial.imageTwoUrl.isBlank()) {
+            downloadSingleImage(tutorial)
+        } else {
+            downloadTwoImages(tutorial)
+        }
+    }
+
+    private fun downloadSingleImage(tutorial: Tutorial) {
+        lifecycleScope.launch {
+            val originalBitmap = getOriginalBitmap(tutorial)
+            val snowFilterBitmap = loadSnowFilter(originalBitmap)
+            loadImage(snowFilterBitmap)
+
+        }
+    }
+
+    private fun downloadTwoImages(tutorial: Tutorial) {
+        lifecycleScope.launch {
+
+            val deferredOne = lifecycleScope.async {
+                getOriginalBitmap(tutorial)
+            }
+
+            val deferredTwo = lifecycleScope.async {
+                val originalBitmap = getOriginalBitmap(tutorial)
+                loadSnowFilter(originalBitmap)
+            }
+
+            loadTwoImages(deferredOne.await(), deferredTwo.await())
+        }
+    }
+
+    //1
+    private suspend fun getOriginalBitmap(tutorial: Tutorial): Bitmap =
+        //2
+        withContext(Dispatchers.IO) {
+            //3
+            URL(tutorial.imageUrl).openStream().use {
+                return@withContext BitmapFactory.decodeStream(it)
+            }
+        }
+
+
+    suspend private fun loadSnowFilter(originalBitmap: Bitmap): Bitmap =
+        withContext(Dispatchers.Default)
+        { SnowFilter.applySnowEffect(originalBitmap) }
+
+
+    private fun loadImage(snowFilterBitmap: Bitmap) {
+        binding?.let {
+            with(it) {
+                progressBar.visibility = View.GONE
+                reload.isVisible = false
+                errorMessage.isVisible = false
+                snowFilterImage.setImageBitmap(snowFilterBitmap)
+            }
+        }
+    }
+
+    private fun loadTwoImages(imageOne: Bitmap, imageTwo: Bitmap) {
+        binding?.let {
+            with(it) {
+                progressBar.visibility = View.GONE
+                reload.isVisible = false
+                errorMessage.isVisible = false
+                snowFilterImage.setImageBitmap(imageOne)
+                snowFilterSecondImage.setImageBitmap(imageTwo)
+            }
+        }
+    }
+
+    private fun showError(message: String) {
+        binding?.let {
+            with(it) {
+                errorMessage.isVisible = true
+                reload.isVisible = true
+                errorMessage.text = message
+                progressBar.isVisible = false
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
+
+    companion object {
+        const val TUTORIAL_KEY = "TUTORIAL"
+
+        fun newInstance(tutorial: Tutorial): TutorialFragment {
+            return TutorialFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(TUTORIAL_KEY, tutorial)
+                }
+            }
+        }
+    }
 }
