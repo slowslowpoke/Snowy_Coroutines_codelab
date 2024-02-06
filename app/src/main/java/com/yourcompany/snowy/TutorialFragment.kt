@@ -46,7 +46,18 @@ import java.net.URL
 class TutorialFragment : Fragment(R.layout.fragment_tutorial) {
     private var binding: FragmentTutorialBinding? = null
 
-    // TODO: Insert coroutineExceptionHandler
+
+    //этот кусок непонятен
+//TODO: оставлю на десерт когда добью исключения
+    private val coroutineExceptionHandler: CoroutineExceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            showError("CoroutineExceptionHandler: ${throwable.message}")
+            throwable.printStackTrace()
+            println("Caught $throwable")
+        }
+    private val tutorialLifecycleScope = lifecycleScope + coroutineExceptionHandler
+////// вот до этого места непонятно
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -71,7 +82,7 @@ class TutorialFragment : Fragment(R.layout.fragment_tutorial) {
     }
 
     private fun downloadSingleImage(tutorial: Tutorial) {
-        lifecycleScope.launch {
+        tutorialLifecycleScope.launch {
             val originalBitmap = getOriginalBitmap(tutorial)
             val snowFilterBitmap = loadSnowFilter(originalBitmap)
             loadImage(snowFilterBitmap)
@@ -91,7 +102,11 @@ class TutorialFragment : Fragment(R.layout.fragment_tutorial) {
                 loadSnowFilter(originalBitmap)
             }
 
-            loadTwoImages(deferredOne.await(), deferredTwo.await())
+            try {
+                loadTwoImages(deferredOne.await(), deferredTwo.await())
+            } catch (e: Exception) {
+                showError("Try/catch: ${e.message}")
+            }
         }
     }
 
