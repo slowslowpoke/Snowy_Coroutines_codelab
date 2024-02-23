@@ -36,9 +36,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.material.tabs.TabLayoutMediator
 import com.yourcompany.snowy.databinding.ActivityMainBinding
 import com.yourcompany.snowy.model.Tutorial
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
   private lateinit var binding: ActivityMainBinding
@@ -64,28 +61,6 @@ class MainActivity : AppCompatActivity() {
         }
       }.attach()
     }
-
-
-
-    runBlocking {
-      //1
-      val printingJob = launch {
-        //2
-        repeat(10) { number ->
-          delay(200)
-          println(number)
-        }
-      }
-      //3
-      delay(1000)
-      //4
-      printingJob.cancel()
-      println("I canceled the printing job!")
-    }
-
-
-
-
   }
 
   private fun getTutorialData(): List<Tutorial> {

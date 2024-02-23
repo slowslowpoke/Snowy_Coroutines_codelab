@@ -47,8 +47,6 @@ class TutorialFragment : Fragment(R.layout.fragment_tutorial) {
     private var binding: FragmentTutorialBinding? = null
 
 
-    //этот кусок непонятен
-//TODO: оставлю на десерт когда добью исключения
     private val coroutineExceptionHandler: CoroutineExceptionHandler =
         CoroutineExceptionHandler { _, throwable ->
             showError("CoroutineExceptionHandler: ${throwable.message}")
@@ -56,7 +54,6 @@ class TutorialFragment : Fragment(R.layout.fragment_tutorial) {
             println("Caught $throwable")
         }
     private val tutorialLifecycleScope = lifecycleScope + coroutineExceptionHandler
-////// вот до этого места непонятно
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,7 +118,7 @@ class TutorialFragment : Fragment(R.layout.fragment_tutorial) {
         }
 
 
-    suspend private fun loadSnowFilter(originalBitmap: Bitmap): Bitmap =
+    private suspend fun loadSnowFilter(originalBitmap: Bitmap): Bitmap =
         withContext(Dispatchers.Default)
         { SnowFilter.applySnowEffect(originalBitmap) }
 
